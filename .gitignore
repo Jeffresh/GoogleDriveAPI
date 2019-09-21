@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+#pycharm
+.idea
+
+#secretfiles
+
+auth/client_secret/client_secret.json
+auth/token_pickle/token.pickle
