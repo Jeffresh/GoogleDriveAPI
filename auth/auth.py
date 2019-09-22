@@ -19,7 +19,8 @@ class AuthDecorators:
         def wrapper(*args):
             if os.path.exists('../auth/token_pickle/token.pickle'):
                 os.remove('../auth/token_pickle/token.pickle')
-            return func(*args)
+
+            func(*args)
 
         return wrapper
 
@@ -40,6 +41,7 @@ class Auth(AuthDecorators):
         :param newscopes: A set of URIS that represent the roles for the owner of the account.
         """
         self._SCOPES = newscopes[:]
+
 
     @AuthDecorators.remove_credentials
     def add_credentials(self, morescopes):
