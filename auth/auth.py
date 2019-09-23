@@ -33,6 +33,8 @@ class Auth(AuthDecorators):
     def __init__(self, scopes='https://www.googleapis.com/auth/drive.metadata.readonly'):
         self._SCOPES = [scopes]
 
+        print(self._SCOPES)
+
     @AuthDecorators.remove_credentials
     def set_credentials(self, newscopes):
         """

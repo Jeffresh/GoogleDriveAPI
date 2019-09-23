@@ -1,4 +1,5 @@
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
 from auth import auth
 
@@ -34,7 +35,45 @@ class GoogleDriveV3(auth.Auth):
         # TODO implement
         pass
 
-    def create_file(self, path, name):
+    def create_file(self, path=None, name='My Report'):
+
+        # application / vnd.google - apps.document google docs
+        # application/vnd.google-apps.file 	Google Drive file
+        # application/vnd.google-apps.folder 	Google Drive folder
+        # application/vnd.google-apps.spreadsheet 	Google Sheets
+
+        file_metadata = {
+            'name': name,
+            'mimeType': 'application/vnd.google-apps.document'
+        }
+
+        file = self.service.files().create(body=file_metadata,
+                                            media_body=None,
+                                            fields='id').execute()
+        print('File ID: %s' % file.get('id'))
+
+    def upload_directory(self, path, name):
+
+        # application / vnd.google - apps.document google docs
+        # application/vnd.google-apps.file 	Google Drive file
+        # application/vnd.google-apps.folder 	Google Drive folder
+        # application/vnd.google-apps.spreadsheet 	Google Sheets
+
+        file_metadata = {
+            'name': name,
+            'mimeType': 'application/vnd.google-apps.document'
+        }
+        media = MediaFileUpload(path,
+                                mimetype='text/doc',
+                                resumable=True)
+
+        file = self.service.files().create(body=file_metadata,
+                                            media_body=media,
+                                            fields='id').execute()
+        print('File ID: %s' % file.get('id'))
+
+
+    def upload_file(self):
         # TODO implement
         pass
 
