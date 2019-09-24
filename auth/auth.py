@@ -44,7 +44,6 @@ class Auth(AuthDecorators):
         """
         self._SCOPES = newscopes[:]
 
-
     @AuthDecorators.remove_credentials
     def add_credentials(self, morescopes):
         """

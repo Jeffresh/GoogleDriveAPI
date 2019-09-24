@@ -10,6 +10,9 @@ class GoogleDriveV3(auth.Auth):
     """
 
     def __init__(self, scopes='https://www.googleapis.com/auth/drive.metadata.readonly'):
+        """
+        :param scopes: This URIs represent the permissions, what you can do with google drive. Default: readonly.
+        """
 
         super().__init__(scopes)
         creds = super().get_credentials()
@@ -47,18 +50,17 @@ class GoogleDriveV3(auth.Auth):
 
         return items
 
-    def create_directory(self, path, name='My Directory'):
+    def create_directory(self, path=None, name='My Directory'):
 
         file_metadata = {
             'name': name,
             'mimeType': 'application/vnd.google-apps.folder'
         }
 
-        file = self.service.files().create(body=file_metadata,
-                                            fields='id').execute()
+        file = self.service.files().create(body=file_metadata, fields='id').execute()
         print('File ID: %s' % file.get('id'))
 
-    def create_file(self, path=None, name='My Report'):
+    def create_file(self, name='My Report', name_directory=None,):
 
         # TODO parametrize correctly
 
@@ -67,13 +69,21 @@ class GoogleDriveV3(auth.Auth):
         # application/vnd.google-apps.folder 	Google Drive folder
         # application/vnd.google-apps.spreadsheet 	Google Sheets
 
+        if name_directory:
+            items = self.search(name_directory)
+            if items:
+                parents = [items[0]['id']]
+                print('finded {}'.format(parents))
+        else:
+            parents = None
+
         file_metadata = {
             'name': name,
-            'mimeType': 'application/vnd.google-apps.document'
+            'mimeType': 'application/vnd.google-apps.document',
+            'parents': parents
         }
 
-        file = self.service.files().create(body=file_metadata,
-                                            fields='id').execute()
+        file = self.service.files().create(body=file_metadata, fields='id').execute()
         print('File ID: %s' % file.get('id'))
 
     def upload_directory(self, path, name):
@@ -127,9 +137,26 @@ class GoogleDriveV3(auth.Auth):
         # TODO implement
         pass
 
-    def share_with(self, file, user):
-        # TODO implement
-        pass
+    def share_with(self, name_file, user_mail):
+        """
+        Share  the file with a user.
+
+        :param name_file:
+        :param user_mail:
+        :return:
+        """
+
+        file = self.search(name_file)
+
+        file_id = file[0]['id']
+
+        user_permission = {
+            'type': 'user',
+            'role': 'writer',
+            'emailAddress': user_mail
+        }
+
+        self.service.permissions().create(fileId=file_id, body=user_permission, fields='id',)
 
     def search(self, name_file):
         """
