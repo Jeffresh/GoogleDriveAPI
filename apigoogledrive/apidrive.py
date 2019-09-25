@@ -14,18 +14,24 @@ class GoogleDriveV3(auth.Auth):
     # application/vnd.google-apps.folder 	Google Drive folder
     # application/vnd.google-apps.spreadsheet 	Google Sheets
 
-    def _create_file(self, func):
+    def _create_file(func):
+        """
+        Decorator
+        """
 
         def wrapper(*args, **kwargs):
             parents = None
-
-            if kwargs['name_parent_directory']:
-                items = self.search(kwargs['name_parent_directory'])
+            print(args)
+            if args[2]:
+                items = args[0].search(args[2])
                 if items:
                     parents = [items[0]['id']]
                     print('finded {}'.format(parents))
 
-            func()
+            file_metadata = func(args[0],args[1], parents)
+
+            file = args[0].service.files().create(body=file_metadata, fields='id').execute()
+            print('File ID: %s' % file.get('id'))
 
         return wrapper
 
@@ -73,43 +79,24 @@ class GoogleDriveV3(auth.Auth):
     @_create_file
     def create_directory(self, name='My Directory', name_parent_directory=None):
 
-        parents = None
-
-        if name_parent_directory:
-            items = self.search(name_parent_directory)
-            if items:
-                parents = [items[0]['id']]
-                print('finded {}'.format(parents))
-
         folder_metadata = {
             'name': name,
             'mimeType': 'application/vnd.google-apps.folder',
-            'parents': parents
+            'parents': name_parent_directory
         }
 
-        file = self.service.files().create(body=folder_metadata, fields='id').execute()
-        print('File ID: %s' % file.get('id'))
+        return folder_metadata
 
-    def create_file(self, name='My Report', name_directory=None):
-
-        # TODO parametrize correctly
-
-        parents = None
-
-        if name_directory:
-            items = self.search(name_directory)
-            if items:
-                parents = [items[0]['id']]
-                print('finded {}'.format(parents))
+    @_create_file
+    def create_file(self, name='My Report', name_parent_directory=None):
 
         file_metadata = {
             'name': name,
             'mimeType': 'application/vnd.google-apps.document',
-            'parents': parents
+            'parents': name_parent_directory
         }
 
-        file = self.service.files().create(body=file_metadata, fields='id').execute()
-        print('File ID: %s' % file.get('id'))
+        return file_metadata
 
     def upload_directory(self, path, name):
 
