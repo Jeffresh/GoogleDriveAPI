@@ -42,7 +42,7 @@ You have place the <b>auth</b> and the <b>apigoogledrive</b> in the same directo
 and create the folders <b> client_secret</b> and <b>token_pickle</b> inside of
 the <b>auth</b> folder.
 
-![Directory Tree](https://imgur.com/kUrPO9V)
+<blockquote class="imgur-embed-pub" lang="en" data-id="kUrPO9V"><a href="//imgur.com/kUrPO9V"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 # Methods implemented
 
 - 
