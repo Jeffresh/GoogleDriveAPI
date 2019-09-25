@@ -9,6 +9,26 @@ class GoogleDriveV3(auth.Auth):
     Class to encapsulate the services of Google Drive
     """
 
+    # application / vnd.google - apps.document google docs
+    # application/vnd.google-apps.file 	Google Drive file
+    # application/vnd.google-apps.folder 	Google Drive folder
+    # application/vnd.google-apps.spreadsheet 	Google Sheets
+
+    def _create_file(self, func):
+
+        def wrapper(*args, **kwargs):
+            parents = None
+
+            if kwargs['name_parent_directory']:
+                items = self.search(kwargs['name_parent_directory'])
+                if items:
+                    parents = [items[0]['id']]
+                    print('finded {}'.format(parents))
+
+            func()
+
+        return wrapper
+
     def __init__(self, scopes='https://www.googleapis.com/auth/drive.metadata.readonly'):
         """
         :param scopes: This URIs represent the permissions, what you can do with google drive. Default: readonly.
@@ -50,32 +70,37 @@ class GoogleDriveV3(auth.Auth):
 
         return items
 
-    def create_directory(self, path=None, name='My Directory'):
+    @_create_file
+    def create_directory(self, name='My Directory', name_parent_directory=None):
 
-        file_metadata = {
+        parents = None
+
+        if name_parent_directory:
+            items = self.search(name_parent_directory)
+            if items:
+                parents = [items[0]['id']]
+                print('finded {}'.format(parents))
+
+        folder_metadata = {
             'name': name,
-            'mimeType': 'application/vnd.google-apps.folder'
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': parents
         }
 
-        file = self.service.files().create(body=file_metadata, fields='id').execute()
+        file = self.service.files().create(body=folder_metadata, fields='id').execute()
         print('File ID: %s' % file.get('id'))
 
-    def create_file(self, name='My Report', name_directory=None,):
+    def create_file(self, name='My Report', name_directory=None):
 
         # TODO parametrize correctly
 
-        # application / vnd.google - apps.document google docs
-        # application/vnd.google-apps.file 	Google Drive file
-        # application/vnd.google-apps.folder 	Google Drive folder
-        # application/vnd.google-apps.spreadsheet 	Google Sheets
+        parents = None
 
         if name_directory:
             items = self.search(name_directory)
             if items:
                 parents = [items[0]['id']]
                 print('finded {}'.format(parents))
-        else:
-            parents = None
 
         file_metadata = {
             'name': name,

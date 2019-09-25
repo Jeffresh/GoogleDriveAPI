@@ -9,6 +9,8 @@ if __name__ == '__main__':
 
     # GD.create_directory()
     GD.create_file('New File', 'My Directory')
+    GD.create_directory('New Directory', 'My Directory')
+
     #
     # GD.create_directory('nopath')
 

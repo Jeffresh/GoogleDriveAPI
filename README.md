@@ -1,10 +1,13 @@
-# App using GoogleDriveAPI
-Respository to testing the Google Drive API.
+#Google Drive API
+
+In progress
 
 
-#Prerequisites
+# Description
+Own reimplementation of Google Drive API using Google Drive SDK.
 
 
+# Prerequisites
 
 To run this quickstart, you'll need:
 
@@ -27,7 +30,27 @@ Run the following command to install the library using pip:
 
 
 
-
+##### Prerequisites Original Source:
 [Python Quickstart: Google Drive Official API Guide](https://developers.google.com/drive/api/v3/quickstart/python?pli=1)
+
+
+# Requisites
+
+### Directory tree:
+
+You have place the <b>auth</b> and the <b>apigoogledrive</b> in the same directory
+and create the folders <b> client_secret</b> and <b>token_pickle</b> inside of
+the <b>auth</b> folder.
+
+![Directory Tree](https://imgur.com/a/MtUNVNl)
+# Methods implemented
+
+- 
+- 
+- 
+- 
+
+
+
 
 

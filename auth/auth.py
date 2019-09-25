@@ -62,7 +62,7 @@ class Auth(AuthDecorators):
     def SCOPES(self):
         """
         Get the SCOPES
-
+        
         :return SCOPES: URIs that represent the permissions.
         """
         return self._SCOPES
