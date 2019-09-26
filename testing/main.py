@@ -8,8 +8,10 @@ if __name__ == '__main__':
     GD = apidrive.GoogleDriveV3('https://www.googleapis.com/auth/drive')
 
     # GD.create_directory()
-    GD.create_file('New File', 'My Directory')
-    GD.create_directory('New Directory', 'My Directory')
+    # GD.create_file('New File', 'My Directory')
+    # GD.create_directory('New Directory', 'My Directory')
+
+    GD.upload_directory('UploadDirectory', 'Uploaded')
 
     #
     # GD.create_directory('nopath')

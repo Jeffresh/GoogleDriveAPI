@@ -9,6 +9,7 @@ class GoogleDriveV3(auth.Auth):
     Class to encapsulate the services of Google Drive
     """
 
+    # List of mimeTypes
     # application / vnd.google - apps.document google docs
     # application/vnd.google-apps.file 	Google Drive file
     # application/vnd.google-apps.folder 	Google Drive folder
@@ -16,7 +17,7 @@ class GoogleDriveV3(auth.Auth):
 
     def _create_file(func):
         """
-        Decorator
+        Decorator for create_files and create_folder
         """
 
         def wrapper(*args, **kwargs):
@@ -28,10 +29,24 @@ class GoogleDriveV3(auth.Auth):
                     parents = [items[0]['id']]
                     print('finded {}'.format(parents))
 
-            file_metadata = func(args[0],args[1], parents)
+            file_metadata = func(args[0], args[1], parents)
 
             file = args[0].service.files().create(body=file_metadata, fields='id').execute()
             print('File ID: %s' % file.get('id'))
+
+        return wrapper
+
+    def _upload_file(func):
+        """
+        Decorator for upload files and  and upload folder
+        """
+
+        def wrapper(*args, **kwargs):
+
+            file_metadata, mimetype = func(args[0], args[1], args[2])
+            media = MediaFileUpload(args[1], mimetype=mimetype, resumable=True)
+            file = args[0].service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            print('File ID: %s Uploaded' % file.get('id'))
 
         return wrapper
 
@@ -98,27 +113,26 @@ class GoogleDriveV3(auth.Auth):
 
         return file_metadata
 
-    def upload_directory(self, path, name):
+    @_upload_file
+    def upload_directory(self, path_to_file, name='My Directory', name_parent_directory=None):
+        """
+        Uploads a directory
 
-        # TODO implement: change mimetype for folder
-        pass
-        # application / vnd.google - apps.document google docs
-        # application/vnd.google-apps.file 	Google Drive file
-        # application/vnd.google-apps.folder 	Google Drive folder
-        # application/vnd.google-apps.spreadsheet 	Google Sheets
+        :param path_to_file:
+        :param name:
+        :param name_parent_directory:
+        :return:
+        """
 
-        # file_metadata = {
-        #     'name': name,
-        #     'mimeType': 'application/vnd.google-apps.document'
-        # }
-        # media = MediaFileUpload(path,
-        #                         mimetype='text/doc',
-        #                         resumable=True)
-        #
-        # file = self.service.files().create(body=file_metadata,
-        #                                     media_body=media,
-        #                                     fields='id').execute()
-        # print('File ID: %s' % file.get('id'))
+        file_metadata = {
+            'name': name,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': name_parent_directory
+        }
+
+        mimetype = None
+
+        return file_metadata, mimetype
 
     def upload_file(self):
         # TODO implement, change mimetype to generic upload or concrete upload by files
