@@ -115,12 +115,31 @@ class GoogleDriveV3(auth.Auth):
 
     @_upload_file
     def upload_directory(self, path_to_file, name='My Directory', name_parent_directory=None):
+
+        # TODO find correct mimetype
         """
         Uploads a directory
 
         :param path_to_file:
         :param name:
         :param name_parent_directory:
+        :return:
+        """
+
+        file_metadata = {
+            'name': name,
+            'mimeType': 'application/vnd.google-apps.documents',
+            'parents': name_parent_directory
+        }
+
+        mimetype ='/text/doc'
+
+        return file_metadata, mimetype
+
+    @_upload_file
+    def upload_file(self, path_to_file, name='My Directory', name_parent_directory=None):
+        """
+
         :return:
         """
 
@@ -133,27 +152,6 @@ class GoogleDriveV3(auth.Auth):
         mimetype = None
 
         return file_metadata, mimetype
-
-    def upload_file(self):
-        # TODO implement, change mimetype to generic upload or concrete upload by files
-        # application / vnd.google - apps.document google docs
-        # application/vnd.google-apps.file 	Google Drive file
-        # application/vnd.google-apps.folder 	Google Drive folder
-        # application/vnd.google-apps.spreadsheet 	Google Sheets
-
-        # file_metadata = {
-        #     'name': name,
-        #     'mimeType': 'application/vnd.google-apps.document'
-        # }
-        # media = MediaFileUpload(path,
-        #                         mimetype='text/doc',
-        #                         resumable=True)
-        #
-        # file = self.service.files().create(body=file_metadata,
-        #                                     media_body=media,
-        #                                     fields='id').execute()
-        # print('File ID: %s' % file.get('id'))
-        pass
 
     def give_permissions(self, file, user):
         # TODO implement
